@@ -1,5 +1,7 @@
 package pack;
 
+import java.util.Random;
+
 import lejos.hardware.Brick;
 import lejos.hardware.BrickFinder;
 import lejos.hardware.Button;
@@ -9,6 +11,7 @@ import lejos.hardware.lcd.LCD;
 import lejos.hardware.motor.Motor;
 import lejos.hardware.port.Port;
 import lejos.hardware.sensor.EV3ColorSensor;
+import lejos.robotics.Color;
 import lejos.robotics.RegulatedMotor;
 //import lejos.hardware.sensor.EV3TouchSensor;
 import lejos.robotics.navigation.MovePilot;
@@ -51,6 +54,17 @@ public class wall_follower {
 		pilot = new MovePilot(6, 13, Motor.B, Motor.C); // 1:wheelDiameter, 2:trackWidth
 		states = new byte[2]; //???
 		String testString;
+		int testInt;
+		
+		//{{{ core
+		int height = 0;
+		int color = -1;
+		
+		
+		
+		//}}}
+
+
 		while(Button.ESCAPE.isUp()){  // button left above?
 			//states = getEnvironment(states, color1);
 
@@ -60,17 +74,37 @@ public class wall_follower {
 
 			// {{{ test part
 			command = 0;
-			motorCommand(Motor.B, command, 50);
-			motorCommand(Motor.C, command, 50);
+			Random rand = new Random();
+			int random_int = rand.nextInt(360);
+			//motorCommand(Motor.B, command, 50);
+			motorCommand(Motor.C, command, 360);
 			Delay.msDelay(500);
 			command = 1;
-			motorCommand(Motor.B, command, 50);
-			motorCommand(Motor.C, command, 50);
-			testString = sensor1.getColorIDMode().getName();
+			Random rand2 = new Random();
+			int random_int2 = rand2.nextInt(360);
+			//motorCommand(Motor.B, command, 50);
+			motorCommand(Motor.C, command, 360);
+			testInt = sensor1.getColorID();
 			LCD.clear();
-			LCD.drawString(testString, 2, 2);
-			
-			
+			LCD.drawString("blue:", 0, 0);
+			LCD.drawInt(Color.BLUE, 7, 0);//2
+			LCD.drawString("red:", 9, 0);
+			LCD.drawInt(Color.RED, 16, 0);
+			LCD.drawString("black:", 0, 1);
+			LCD.drawInt(Color.BLACK, 7, 1);
+			LCD.drawString("green:", 9, 1);
+			LCD.drawInt(Color.GREEN, 16, 1);
+			LCD.drawString("yellow:", 0, 2);
+			LCD.drawInt(Color.YELLOW, 7, 2);
+			LCD.drawString("white:", 9, 2);
+			LCD.drawInt(Color.WHITE, 16, 2);//7
+			LCD.drawString("brown:", 0, 3);
+			LCD.drawInt(Color.BROWN, 7, 3);
+
+			LCD.drawInt(testInt, 5, 6);
+
+
+
 			// test part}}}
 			Delay.msDelay(500);
 
