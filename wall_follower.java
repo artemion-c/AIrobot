@@ -55,13 +55,13 @@ public class wall_follower {
 		states = new byte[2]; //???
 		String testString;
 		int testInt;
-		
+
 		//{{{ core
 		int height = 0;
 		int color = -1;
-		
-		
-		
+
+
+
 		//}}}
 
 
@@ -73,17 +73,22 @@ public class wall_follower {
 			byte command;// = q.getCommand(a);
 
 			// {{{ test part
-			command = 0;
+			// command 0: up tukamu command 1: down hiraku
+			command = 1;//up hiraku
+
 			Random rand = new Random();
-			int random_int = rand.nextInt(360);
-			//motorCommand(Motor.B, command, 50);
-			motorCommand(Motor.C, command, 360);
-			Delay.msDelay(500);
+			//motor.B : arm  motor.C : height
+			// tukamu > sageru > hiraku > ageru
+			command = 0;
+			motorCommand(Motor.B, command, 55);//tukamu
 			command = 1;
-			Random rand2 = new Random();
-			int random_int2 = rand2.nextInt(360);
-			//motorCommand(Motor.B, command, 50);
-			motorCommand(Motor.C, command, 360);
+			motorCommand(Motor.C, command, 200);//sageru
+			command = 1;//down
+			motorCommand(Motor.B, command, 55);//hiraku
+			command = 0;
+			motorCommand(Motor.C, command,200);//ageru
+			Delay.msDelay(500);
+
 			testInt = sensor1.getColorID();
 			LCD.clear();
 			LCD.drawString("blue:", 0, 0);
