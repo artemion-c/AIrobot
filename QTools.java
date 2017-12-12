@@ -1,21 +1,21 @@
 package pack;
 
 public class QTools {
-	
+
 	byte[][] state;
 	byte[] action;
-		
-	
+
+
 	/* Constructor for the Q values
 	 * matrix.
 	 */
-	public QTools(byte actions, byte states){
-		state = new byte[states][2];
-		action = new byte[actions];
+	public QTools(byte actions, byte states){//[3, 3]
+		state = new byte[states][2];//[3, 2]
+		action = new byte[actions];//[3]
 		initAction(action);
-		initState(state);
+		//initState(state);
 	}
-	
+
 	/* Initialize the Q-values matrix with random values.
 	 * The size of this matrix depends on the amount of states and actions.
 	 */
@@ -27,7 +27,7 @@ public class QTools {
 			}
 		}
 	}
-	
+
 	/* Initialize the matrix of states given the amount of
 	 * combinations of the sensors (That establish the environment)
 	 * In this robots exists 2 contact sensors with ON/OFF states
@@ -43,11 +43,12 @@ public class QTools {
 			}
 		}
 	}
-	
+
 	/*Initialize the matrix of actions the robot can make
 	 * regarding both motors as one entity.
 	 */
 	public static void initAction(byte[] action){
+		// up:0 down:1 stay:2
 		for(byte i=0; i<action.length; ++i){
 			action[i] = i;
 		}
@@ -59,142 +60,68 @@ public class QTools {
 	public byte getCommand(byte a){
 		return action[a];
 	}
-	
+
+	// s:state(good, cool, bad) = (0, 1, 2)
+	// a:action(up, down, stay) = (0, 1, 2)
 	public float reward(int s, byte a){
 		float r = 0;
 		switch(s){
-		case 0:  //No contacts and ON
-			switch(a){
-			case 5:  // Motors Moving forward
-				r = 1;  // Large reward
-				break;
-				
-			case 1:  // Robot turn to the left (soft)
-				r = -0.3f;  // good reward
-				break;
-				
-			case 2:  // Robot turn to the left (hard)
-				r = -1f;  // I'll not complain
-				break;
-				
-			case 3:  // Robot turn to the right	(soft)
-				r = -0.3f;  // punishment
-				break;
-				
-			case 4:  // Robot turn to the right	(hard)
-				r = -1f;  // punishment
-				break;
-				
-			case 0:  // Robot stops
-				r = -0.2f;  // Small punishment
-				break;
-				
-			default: break;
-			}
-			
-			break;
-		
-		case 1:  // Right bumper is ON
-			
-			switch(a){
-			case 5:  // Motors Moving forward
-				r = 1;  // Large reward
-				break;
-				
-			case 1:  // Robot turn to the left (soft)
-				r = 0f;  // good reward
-				break;
-				
-			case 2:  // Robot turn to the left (hard)
-				r = -1;  // I'll not complain
-				break;
-				
-			case 3:  // Robot turn to the right	(soft)
-				r = 0.2f;  // punishment
-				break;
-				
-			case 4:  // Robot turn to the right	(hard)
-				r = -1f;  // punishment
-				break;
-				
-			case 0:  // Robot stops
-				r = -0.2f;  // Small punishment
-				break;
-				
-			default: break;
-			}
-			
-			break;
-		
-		case 2:  // Left bumper is ON
-			
-			switch(a){
-			case 5:  // Motors Moving forward
-				r = 1;  // Large reward
-				break;
-				
-			case 1:  // Robot turn to the left (soft)
-				r = 0.2f;  // Punishment
-				break;
-				
-			case 2:  // Robot turn to the left (hard)
-				r = -1f;  // Punishment
-				break;
-				
-			case 3:  // Robot turn to the right	(soft)
-				r = 0f;  // reward
-				break;
-				
-			case 4:  // Robot turn to the right	(hard)
-				r = -1f;  // I'll not complain
-				break;
-				
-			case 0:  // Robot stops
-				r = -0.2f;  // Small punishment
-				break;
-				
-			default: break;
-			}
+
+			case 0:  //good
+				switch(a){
+				case 0: //up
+					r = -1f;
+					break;
+				case 1: //down
+					r = -1f;
+					break;
+				case 2: //stay
+					r = 1;
+					break;
+				default: break;
+				}
 
 			break;
 
-			
-		case 3:  // Both bumpers ON
-			switch(a){
-			case 5:  // Motors Moving forward
-				r = -1f;  // Large reward
-				break;
-				
-			case 1:  // Robot turn to the left (soft)
-				r = -1f;  // Punishment
-				break;
-				
-			case 2:  // Robot turn to the left (hard)
-				r = 1f;  // Punishment
-				break;
-				
-			case 3:  // Robot turn to the right	(soft)
-				r = -1f;  // reward
-				break;
-				
-			case 4:  // Robot turn to the right	(hard)
-				r = 1f;  // I'll not complain
-				break;
-				
-			case 0:  // Robot stops
-				r = -0.2f;  // Small punishment
-				break;
-				
+			case 1:  //cool
+				switch(a){
+				case 0: //up
+					r = 0.5f;
+					break;
+				case 1: //down
+					r = 0.5f;
+					break;
+				case 2: //stay
+					r = -0.5f;
+					break;
+				default: break;
+				}
+
+			break;
+
+			case 2:  //bad
+				switch(a){
+				case 0: //up
+					r = 1;
+					break;
+				case 1: //down
+					r = 1;
+					break;
+				case 2: //stay
+					r = -1f;
+					break;
+				default: break;
+				}
+
+			break;
+
 			default: break;
 			}
-			
-		default: break;
-		}
-		
+
 		return r;
-		
+
 	}
-	
+
 	/* Given an array of environments or actual states of the sensors
 	 * Compare with the states matrix and get the ID of the matching one.
 	 */
@@ -211,5 +138,5 @@ public class QTools {
 		}
 		return -1;
 	}
-	
+
 }

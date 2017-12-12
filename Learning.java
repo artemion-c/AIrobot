@@ -10,7 +10,7 @@ import lejos.hardware.lcd.LCD;
 //import lejos.utility.Delay;
 
 public class Learning {
-	public static byte NUMBER_OF_ACTIONS = 2;
+	public static byte NUMBER_OF_ACTIONS = 3;
 
 	public static float LEARN_RATE = 0.35f;
 	public static float EXPLORE_RATE = 0.15f;
@@ -32,9 +32,9 @@ public class Learning {
 		qT.setRandomVal(Q);
 	}
 
-	public byte getAction(byte[] states){
+	public byte getAction(byte state){
 
-		byte st = qT.getState(states);  //Environment -> ID state (New state)
+		byte st = state; //Environment -> ID state (New state)
 		if(ls >= 0){
 
 			r = qT.reward(ls, la);
@@ -58,13 +58,13 @@ public class Learning {
 		ls = st;
 
 		float rand = (float) Math.random();
-		if(rand > EXPLORE_RATE){
+		if(rand > EXPLORE_RATE ){
 			la = MaxA;
 		}else{
 			la = (byte)(Math.random()*NUMBER_OF_ACTIONS);
 		}
 
-		writeMess("State & Action", "Reward = ", ls, la, r);
+		//writeMess("State & Action", "Reward = ", ls, la, r);
 
 		return la;
 
@@ -88,12 +88,12 @@ public class Learning {
 	public void writeMess(String mess1, String mess2, int val1, int val2, float val3){
 
 		LCD.clear();
-		LCD.drawString(mess1, 2, 1); LCD.drawInt(val1, 4, 2); LCD.drawInt(val2, 12, 2);
+		LCD.drawString(mess1, 0, 5); LCD.drawInt(val1, 15, 5); LCD.drawInt(val2, 19, 5);
 
-		LCD.drawString(mess2, 2, 4); LCD.drawInt((int)(val3*100), 11, 4);
+		LCD.drawString(mess2, 0, 6); LCD.drawInt((int)(val3*100), 11, 6);
 
-		LCD.drawString("L.R = ", 1, 6); LCD.drawInt((int)(LEARN_RATE*100), 6, 6);
-		LCD.drawString("E.R = ", 10, 6); LCD.drawInt((int)(EXPLORE_RATE*100), 15, 6);
+		//LCD.drawString("L.R = ", 1, 7); LCD.drawInt((int)(LEARN_RATE*100), 6, 7);
+		//LCD.drawString("E.R = ", 10, 7); LCD.drawInt((int)(EXPLORE_RATE*100), 15, 7);
 
 	}
 
