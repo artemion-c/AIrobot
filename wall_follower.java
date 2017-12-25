@@ -1,5 +1,11 @@
 package pack;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+
 import lejos.hardware.Brick;
 import lejos.hardware.BrickFinder;
 import lejos.hardware.Button;
@@ -14,7 +20,10 @@ import lejos.robotics.RegulatedMotor;
 import lejos.robotics.navigation.MovePilot;
 import lejos.utility.Delay;
 
+
 public class wall_follower {
+
+
 
 	public static byte NUMBER_ACTIONS = 3;//???
 	public static byte NUMBER_STATES = 3;//???
@@ -33,6 +42,15 @@ public class wall_follower {
 	@SuppressWarnings("deprecation") //remove warnings
 
 	public static void main(String[] args) { // <---start--->
+		try {
+			File file = new File("result.csv");
+
+			PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(file, true)));
+
+
+
+
+
 		Brick brick1 = BrickFinder.getDefault(); //device <- initialization
 
 		//{{{ touch sensor
@@ -96,7 +114,7 @@ public class wall_follower {
 			// state judge 0:good 1:cool 2:bad
 			if(now_color == prev_color) { //sonomama
 				state = 2;
-				state_history[history_count] = 1;
+				state_history[history_count] = 0;
 			}else if( (now_color == 0 && prev_color == 6) ||
 					   (now_color == 1 && prev_color == 3) ||
 					   (now_color == 2 && prev_color == 7) ||
@@ -104,6 +122,7 @@ public class wall_follower {
 					   (now_color == 6 && prev_color == 0) ||
 					   (now_color == 7 && prev_color == 2)) { //hanntai
 				state = 0;
+				state_history[history_count] = 1;
 			}
 			else {//sokumen
 				state = 1;
@@ -122,10 +141,14 @@ public class wall_follower {
 
 			if(a == 0) {
 				if(height > initial_height - height_delta) {
+					height -= 1;
+				}else {
 					height = initial_height;
 				}
 			}else if(a == 1) {
 				if(height < initial_height + height_delta) {
+					height += 1;
+				}else {
 					height = initial_height;
 				}
 			}
@@ -185,12 +208,18 @@ public class wall_follower {
 			LCD.drawInt(now_color, 12, 4);
 			LCD.drawString("count:", 0, 5);
 			LCD.drawInt(history_count, 12, 5);
-
+			pw.println(history_count);
+			pw.println(",");
+			pw.println(probability);
+			pw.println("\n");
 			// test part}}}
 			Delay.msDelay(300);
 
 		}
 		//exit(sensor1);
+	 } catch(IOException e) {
+         System.out.println(e);
+     }
 
 	}
 
